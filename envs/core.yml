@@ -1,0 +1,20 @@
+# The analysis & equilibrium environment.
+# NumPy is pinned <2 because the released FreeGS breaks at solve time on
+# NumPy 2 (verified 2026-09-29); everything here resolves and runs against
+# NumPy 1.x. cfspopcon requires numpy>=2.4, so it lives in the transport
+# environment instead.
+name: core
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy<2
+  - scipy
+  - matplotlib
+  - jupyterlab
+  - pip
+  - pip:
+      - freegs
+      - freeqdsk
+      - plasmapy
+      - omas

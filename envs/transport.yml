@@ -1,0 +1,12 @@
+# The NumPy-2 modeling environment: TORAX's JAX stack conflicts with the
+# NumPy 1.x that FreeGS requires (verified 2026-09-29 — one environment is
+# unresolvable), and cfspopcon requires numpy>=2.4, so it lives here too.
+name: transport
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - torax
+      - cfspopcon

@@ -1,0 +1,48 @@
+name: Build, smoke-test & publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t fusion-stack:ci .
+
+      - name: "Smoke: solve a real equilibrium (FreeGS)"
+        run: docker run --rm fusion-stack:ci fus core python /opt/stack/tests/first_equilibrium.py
+
+      - name: "Smoke: core imports"
+        run: docker run --rm fusion-stack:ci fus core python -c "import freegs, freeqdsk, plasmapy, omas; print('core imports OK')"
+
+      - name: "Smoke: transport imports"
+        run: docker run --rm fusion-stack:ci fus transport python -c "import torax, cfspopcon; print('transport imports OK')"
+
+      - name: "Smoke: OpenMC imports"
+        run: docker run --rm fusion-stack:ci fus neutronics python -c "import openmc; print('openmc', openmc.__version__)"
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker tag fusion-stack:ci ghcr.io/${{ github.repository_owner }}/fusion-stack:latest
+          docker tag fusion-stack:ci ghcr.io/${{ github.repository_owner }}/fusion-stack:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fusion-stack:latest
+          docker push ghcr.io/${{ github.repository_owner }}/fusion-stack:${{ github.sha }}

@@ -1,0 +1,10 @@
+# OpenMC installs from conda-forge (no pip wheels for every platform).
+# Nuclear data is NOT baked into the image (it is several GB and carries its
+# own distribution terms) — download a library from openmc.org or FENDL from
+# the IAEA, then set OPENMC_CROSS_SECTIONS. See the README.
+name: neutronics
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - openmc

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Copyright 2026 The Fusion Commons contributors
+# SPDX-License-Identifier: Apache-2.0
+# fus — run a command in one of the fusion-stack environments.
+set -euo pipefail
+
+cmd="${1:-help}"
+case "$cmd" in
+  list)
+    micromamba env list
+    ;;
+  lab)
+    shift || true
+    exec micromamba run -n core jupyter lab --ip=0.0.0.0 --no-browser "$@"
+    ;;
+  core|transport|neutronics)
+    env="$cmd"
+    shift
+    exec micromamba run -n "$env" "$@"
+    ;;
+  *)
+    cat <<'EOF'
+fus — the fusion-stack launcher
+
+  fus core       <command…>   equilibrium & analysis (FreeGS, PlasmaPy, OMAS)
+  fus transport  <command…>   transport & operating points (TORAX, cfspopcon)
+  fus neutronics <command…>   neutronics (OpenMC)
+  fus lab                     JupyterLab in the core environment (port 8888)
+  fus list                    show the environments
+
+Example: fus core python /opt/stack/tests/first_equilibrium.py
+EOF
+    exit 1
+    ;;
+esac
