@@ -18,3 +18,7 @@ dependencies:
       - freeqdsk
       - plasmapy
       - omas
+      # KODEX — the Kronos family of codes (benchmarked AI/ML fusion surrogates
+      # + quantum tools). Needs numpy<2, so it lives here in core; its physics
+      # engine kronos-toolkit resolves automatically as a dependency.
+      - kronos-fusion-ml

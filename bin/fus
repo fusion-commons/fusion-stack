@@ -22,7 +22,7 @@ case "$cmd" in
     cat <<'EOF'
 fus — the fusion-stack launcher
 
-  fus core       <command…>   equilibrium & analysis (FreeGS, PlasmaPy, OMAS)
+  fus core       <command…>   equilibrium & analysis (FreeGS, PlasmaPy, OMAS, KODEX)
   fus transport  <command…>   transport & operating points (TORAX, cfspopcon)
   fus neutronics <command…>   neutronics (OpenMC)
   fus lab                     JupyterLab in the core environment (port 8888)

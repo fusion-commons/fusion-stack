@@ -25,6 +25,12 @@ jobs:
       - name: "Smoke: core imports"
         run: docker run --rm fusion-stack:ci fus core python -c "import freegs, freeqdsk, plasmapy, omas; print('core imports OK')"
 
+      - name: "Smoke: KODEX imports (kronos-fusion-ml)"
+        run: docker run --rm fusion-stack:ci fus core python -c "import kronos_ml as K; print('kodex', len(K.list_surrogates()), 'codes')"
+
+      - name: "Smoke: KODEX runs a surrogate"
+        run: docker run --rm fusion-stack:ci fus core python /opt/stack/tests/first_kodex.py
+
       - name: "Smoke: transport imports"
         run: docker run --rm fusion-stack:ci fus transport python -c "import torax, cfspopcon; print('transport imports OK')"
 
