@@ -23,9 +23,14 @@ RUN micromamba create -y -f /opt/stack/envs/core.yml && \
 # with a sequence" whenever a critical point's Newton refinement runs (numerics-
 # dependent, so it surfaces in CI but not always locally). Add the missing [0][0];
 # the trailing grep makes the build fail loudly if the line ever stops matching.
-RUN f="$(echo /opt/conda/envs/core/lib/python*/site-packages/freegs/critical.py)" && \
-    sed -i 's/f(R1, Z1, dx=2) \/ R1/f(R1, Z1, dx=2)[0][0] \/ R1/' "$f" && \
-    grep -q 'f(R1, Z1, dx=2)\[0\]\[0\] / R1' "$f"
+RUN set -e; patched=0; \
+    for f in /opt/conda/envs/core/lib/python*/site-packages/freegs/critical.py; do \
+      [ -f "$f" ] || continue; \
+      sed -i 's/f(R1, Z1, dx=2) \/ R1/f(R1, Z1, dx=2)[0][0] \/ R1/' "$f"; \
+      grep -q 'f(R1, Z1, dx=2)\[0\]\[0\] / R1' "$f"; \
+      patched=1; \
+    done; \
+    [ "$patched" = 1 ]
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER bin/fus /usr/local/bin/fus
 COPY --chown=$MAMBA_USER:$MAMBA_USER tests/ /opt/stack/tests/
